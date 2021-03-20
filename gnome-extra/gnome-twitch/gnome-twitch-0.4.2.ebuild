@@ -3,17 +3,19 @@
 
 EAPI=6
 
-inherit gnome2-utils fdo-mime meson
+inherit gnome2-utils xdg-utils meson
 
 DESCRIPTION="Enjoy Twitch on your GNU/Linux desktop"
 HOMEPAGE="http://gnome-twitch.vinszent.com/"
-SRC_URI="https://github.com/vinszent/gnome-twitch/archive/v${PV}.tar.gz -> ${P}.tar.gz "
+SRC_URI="https://github.com/vinszent/gnome-twitch/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz "
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 DOCS="README.md CHANGELOG.md CONTRIBUTING.md"
 IUSE="gst-cairo gst-opengl gst-clutter mpv"
+
+REQUIRED_USE="|| ( gst-cairo gst-opengl gst-clutter mpv )"
 
 RDEPEND=">=x11-libs/gtk+-3.20
 		net-libs/libsoup
@@ -80,7 +82,7 @@ src_configure() {
 		fi
 	fi
 
-	emesonargs="-Dbuild-player-backends="${backends}" -Ddo-post-install=false -Db_lundef=false"
+	emesonargs=(-Dbuild-player-backends="${backends}" -Ddo-post-install=false -Db_lundef=false)
 
 	meson_src_configure
 }
@@ -104,12 +106,12 @@ pkg_preinst() {
 
 pkg_postinst() {
 	gnome2_schemas_update
-	fdo-mime_desktop_database_update
+	xdg_desktop_database_update
 	gnome2_icon_cache_update
 }
 
 pkg_postrm() {
 	gnome2_icon_cache_update
-	fdo-mime_desktop_database_update
+	xdg_desktop_database_update
 	gnome2_schemas_update
 }
